@@ -1,83 +1,106 @@
 package com.example.dsd20252.ui;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.dsd20252.R;
-import com.example.dsd20252.model.SearchRequest;
 import com.example.dsd20252.model.Store;
-import com.example.dsd20252.network.NetworkClient;
+import com.example.dsd20252.parser.StoreParser;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
+import android.content.Intent;
+import com.example.dsd20252.ui.StoreDetailActivity;
 
 public class ResultsActivity extends AppCompatActivity {
-    private ProgressBar pbLoading;
+    private ProgressBar progressBar;
+    private RecyclerView recyclerView;
     private TextView tvEmpty;
-    private RecyclerView rvStores;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_results);
 
+        setTitle("Search Results");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        setTitle(R.string.title_results);
 
-        pbLoading = findViewById(R.id.pbLoading);
-        tvEmpty   = findViewById(R.id.tvEmpty);
-        rvStores  = findViewById(R.id.rvStores);
+        progressBar  = findViewById(R.id.progressBar);
+        recyclerView = findViewById(R.id.recyclerView);
+        tvEmpty      = findViewById(R.id.tvEmpty);
 
-        pbLoading.setVisibility(View.VISIBLE);
-        tvEmpty.setVisibility(View.GONE);
-        rvStores.setVisibility(View.GONE);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        loadStoresFromAssets();
+    }
 
-        SearchRequest req = (SearchRequest) getIntent()
-                .getSerializableExtra("searchReq");
-
+    private void loadStoresFromAssets() {
         new Thread(() -> {
+            List<Store> stores = new ArrayList<>();
             try {
-                List<Store> stores = new NetworkClient()
-                        .searchStores(req);
-                runOnUiThread(() -> onSearchSuccess(stores));
+                String[] files = getAssets().list("");
+                if (files != null) {
+                    for (String filename : files) {
+                        if (filename.endsWith(".json")) {
+                            InputStream is = getAssets().open(filename);
+                            int size = is.available();
+                            byte[] buffer = new byte[size];
+                            is.read(buffer);
+                            is.close();
+                            String json = new String(buffer, StandardCharsets.UTF_8);
+
+                            if (json.trim().startsWith("[")) {
+                                JSONArray arr = new JSONArray(json);
+                                for (int i = 0; i < arr.length(); i++) {
+                                    stores.add(
+                                            StoreParser.parseStoreFromJson(
+                                                    arr.getJSONObject(i).toString()
+                                            )
+                                    );
+                                }
+                            } else {
+                                stores.add(StoreParser.parseStoreFromJson(json));
+                            }
+                        }
+                    }
+                }
             } catch (Exception e) {
-                runOnUiThread(() -> onSearchError(e));
+                e.printStackTrace();
             }
+
+            runOnUiThread(() -> showStores(stores));
         }).start();
     }
 
-    private void onSearchSuccess(List<Store> stores) {
-        pbLoading.setVisibility(View.GONE);
+    private void showStores(List<Store> stores) {
+        progressBar.setVisibility(View.GONE);
         if (stores.isEmpty()) {
             tvEmpty.setVisibility(View.VISIBLE);
+            recyclerView.setVisibility(View.GONE);
         } else {
-            rvStores.setVisibility(View.VISIBLE);
-            StoreAdapter adapter = new StoreAdapter(
-                    stores,
-                    store -> {
-                        Intent i = new Intent(this, StoreDetailActivity.class);
-                        i.putExtra("store", store);
-                        startActivity(i);
-                    }
-            );
-            rvStores.setAdapter(adapter);
+            tvEmpty.setVisibility(View.GONE);
+            recyclerView.setVisibility(View.VISIBLE);
+            // Use the adapter constructor that takes only a List<Store>
+            StoreAdapter adapter = new StoreAdapter(stores, store -> {
+                // Handle item click: open StoreDetailActivity
+                Intent intent = new Intent(ResultsActivity.this, StoreDetailActivity.class);
+                intent.putExtra("store", store);
+                startActivity(intent);
+            });
+            recyclerView.setAdapter(adapter);
         }
-    }
-
-    private void onSearchError(Exception e) {
-        pbLoading.setVisibility(View.GONE);
-        Toast.makeText(
-                this,
-                getString(R.string.toast_search_error, e.getMessage()),
-                Toast.LENGTH_LONG
-        ).show();
     }
 
     @Override

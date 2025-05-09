@@ -10,10 +10,11 @@
 
         <!-- Loading spinner -->
         <ProgressBar
-            android:id="@+id/pbLoading"
+            android:id="@+id/progressBar"
             style="?android:attr/progressBarStyleLarge"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:visibility="visible"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -35,7 +36,7 @@
 
         <!-- Results list -->
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvStores"
+            android:id="@+id/recyclerView"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:visibility="gone"

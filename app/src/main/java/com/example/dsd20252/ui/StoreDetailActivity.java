@@ -17,20 +17,48 @@ import com.example.dsd20252.model.BuyResponse;
 import com.example.dsd20252.model.Product;
 import com.example.dsd20252.model.Store;
 import com.example.dsd20252.network.NetworkClient;
+import com.example.dsd20252.parser.StoreParser;
 
+import org.json.JSONException;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
 public class StoreDetailActivity extends AppCompatActivity {
+    private Store store;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_store_detail);
 
+        // ─────────────────────────────────────────────────────────────
+        // Load the sample JSON from assets/store.json and parse it
+        try {
+            InputStream is = getAssets().open("store.json");
+            int size = is.available();
+            byte[] buffer = new byte[size];
+            is.read(buffer);
+            is.close();
+            String json = new String(buffer, StandardCharsets.UTF_8);
+
+            store = StoreParser.parseStoreFromJson(json);
+        } catch (Exception e) {   // catch all exceptions including those from parser
+            Toast.makeText(
+                    this,
+                    "Failed to load store data: " + e.getMessage(),
+                    Toast.LENGTH_LONG
+            ).show();
+            finish();
+            return;
+        }
+        // ─────────────────────────────────────────────────────────────
+
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setTitle(R.string.title_store_details);
-
-        Store store = (Store) getIntent().getSerializableExtra("store");
 
         TextView tvName   = findViewById(R.id.tvDetailName);
         TextView tvCoords = findViewById(R.id.tvDetailCoords);
@@ -38,10 +66,13 @@ public class StoreDetailActivity extends AppCompatActivity {
         EditText etQty    = findViewById(R.id.etQuantity);
         Button btnBuy     = findViewById(R.id.btnBuy);
 
+        // Populate UI from parsed Store object
         tvName.setText(store.getStoreName());
         tvCoords.setText(
-                String.format("%.6f, %.6f",
-                        store.getLatitude(), store.getLongitude()
+                String.format(
+                        "%.6f, %.6f",
+                        store.getLatitude(),
+                        store.getLongitude()
                 )
         );
 
@@ -81,8 +112,7 @@ public class StoreDetailActivity extends AppCompatActivity {
 
             new Thread(() -> {
                 try {
-                    BuyResponse resp = new NetworkClient()
-                            .buyProducts(req);
+                    BuyResponse resp = new NetworkClient().buyProducts(req);
                     runOnUiThread(() -> {
                         String msg = resp.isSuccess()
                                 ? getString(R.string.toast_buy_success)
@@ -94,13 +124,11 @@ public class StoreDetailActivity extends AppCompatActivity {
                         ).show();
                     });
                 } catch (Exception e) {
-                    runOnUiThread(() ->
-                            Toast.makeText(
-                                    StoreDetailActivity.this,
-                                    getString(R.string.toast_buy_error, e.getMessage()),
-                                    Toast.LENGTH_LONG
-                            ).show()
-                    );
+                    runOnUiThread(() -> Toast.makeText(
+                            StoreDetailActivity.this,
+                            getString(R.string.toast_buy_error, e.getMessage()),
+                            Toast.LENGTH_LONG
+                    ).show());
                 }
             }).start();
         });
