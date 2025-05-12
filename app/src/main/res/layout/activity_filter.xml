@@ -80,16 +80,16 @@
             android:text="@string/category_pizzeria" />
 
         <CheckBox
-            android:id="@+id/cbFastFood"
+            android:id="@+id/cbVeganCorner"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/category_fast_food" />
+            android:text="@string/category_VeganCorner" />
 
         <CheckBox
-            android:id="@+id/cbBakery"
+            android:id="@+id/cbsouvlaki_house"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/category_bakery" />
+            android:text="@string/category_souvlaki_house" />
 
         <!-- Search Button -->
         <Button

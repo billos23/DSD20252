@@ -1,28 +1,81 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
+    android:layout_margin="8dp"
     android:padding="12dp"
-    android:background="?android:attr/selectableItemBackground"
-    android:clickable="true">
+    android:background="@drawable/bg_store_card"
+    android:elevation="4dp">
 
     <!-- Store name -->
     <TextView
         android:id="@+id/tvStoreName"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:textSize="18sp"
         android:textStyle="bold"
-        android:text="Store Name" />
+        android:textColor="@android:color/black"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
-    <!-- Store coordinates or other details -->
+    <!-- Coordinates -->
     <TextView
-        android:id="@+id/tvStoreDetails"
-        android:layout_width="match_parent"
+        android:id="@+id/tvCoords"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:textSize="14sp"
-        android:layout_marginTop="4dp"
-        android:text="0.000000, 0.000000" />
+        android:textColor="#666666"
+        app:layout_constraintTop_toBottomOf="@id/tvStoreName"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="4dp"/>
 
-</LinearLayout>
+    <!-- Stars and category row -->
+    <LinearLayout
+        android:id="@+id/llMeta"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@id/tvCoords"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <!-- Star icon (built-in) -->
+        <ImageView
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:src="@android:drawable/btn_star_big_on"/>
+
+        <!-- Star count -->
+        <TextView
+            android:id="@+id/tvStars"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:textSize="14sp"
+            android:textColor="#444444"/>
+
+        <!-- Spacer -->
+        <View
+            android:layout_width="16dp"
+            android:layout_height="0dp" />
+
+        <!-- Category tag -->
+        <TextView
+            android:id="@+id/tvCategory"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:paddingLeft="6dp"
+            android:paddingRight="6dp"
+            android:paddingTop="2dp"
+            android:paddingBottom="2dp"
+            android:textSize="12sp"
+            android:textColor="@android:color/white"
+            android:background="@drawable/bg_category_tag"/>
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -29,8 +29,8 @@ public class FilterActivity extends AppCompatActivity {
         CheckBox cbDoubleDollar = findViewById(R.id.cbDoubleDollar);
         CheckBox cbTripleDollar = findViewById(R.id.cbTripleDollar);
         CheckBox cbPizzeria     = findViewById(R.id.cbPizzeria);
-        CheckBox cbFastFood     = findViewById(R.id.cbFastFood);
-        CheckBox cbBakery       = findViewById(R.id.cbBakery);
+        CheckBox cbsouvlaki_house     = findViewById(R.id.cbsouvlaki_house);
+        CheckBox cbVeganCorner = findViewById(R.id.cbVeganCorner);
         Button btnSearch        = findViewById(R.id.btnSearch);
         Button btnSettings      = findViewById(R.id.btnSettings);
 
@@ -70,8 +70,8 @@ public class FilterActivity extends AppCompatActivity {
 
             List<String> foodCats = new ArrayList<>();
             if (cbPizzeria.isChecked())  foodCats.add("pizzeria");
-            if (cbFastFood.isChecked())  foodCats.add("fast_food");
-            if (cbBakery.isChecked())    foodCats.add("bakery");
+            if (cbsouvlaki_house.isChecked())  foodCats.add("souvlaki_house");
+            if (cbVeganCorner.isChecked())    foodCats.add("VeganCorner");
             if (foodCats.isEmpty()) {
                 Toast.makeText(
                         this,

@@ -13,8 +13,8 @@
     <string name="price_triple_dollar">$$$</string>
     <string name="label_food_categories">Food Categories</string>
     <string name="category_pizzeria">Pizzeria</string>
-    <string name="category_fast_food">Fast Food</string>
-    <string name="category_bakery">Bakery</string>
+    <string name="category_souvlaki_house">Souvlaki House</string>
+    <string name="category_VeganCorner">VeganCorner</string>
     <string name="btn_search">Search</string>
     <string name="btn_settings">Settings</string>
     <string name="err_invalid_latlon">Please enter valid latitude and longitude</string>

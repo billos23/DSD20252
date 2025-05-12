@@ -45,7 +45,7 @@ public class StoreDetailActivity extends AppCompatActivity {
             is.close();
             String json = new String(buffer, StandardCharsets.UTF_8);
 
-            store = StoreParser.parseStoreFromJson(json);
+            store = StoreParser.parseStoreFromJsonString(json);
         } catch (Exception e) {   // catch all exceptions including those from parser
             Toast.makeText(
                     this,
