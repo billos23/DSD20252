@@ -89,8 +89,11 @@ public class FilterActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
-        btnSettings.setOnClickListener(v ->
-                startActivity(new Intent(this, SettingsActivity.class))
+        btnSettings.setOnClickListener(v -> {
+
+            Intent intent = new Intent(FilterActivity.this, SettingsActivity.class);
+            startActivity(intent);;
+                }
         );
     }
 }

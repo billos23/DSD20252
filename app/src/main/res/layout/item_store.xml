@@ -22,18 +22,22 @@
         app:layout_constraintEnd_toEndOf="parent"/>
 
     <!-- Coordinates -->
+
+    <!-- Stars and category row -->
     <TextView
         android:id="@+id/tvCoords"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:textSize="14sp"
+        android:layout_marginTop="4dp"
         android:textColor="#666666"
-        app:layout_constraintTop_toBottomOf="@id/tvStoreName"
-        app:layout_constraintStart_toStartOf="parent"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="4dp"/>
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvStoreName"
+        app:layout_constraintVertical_bias="0.342" />
 
-    <!-- Stars and category row -->
     <LinearLayout
         android:id="@+id/llMeta"
         android:layout_width="wrap_content"

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:id="@+id/homeBtn"
+        android:title="Home"
+        />
+
+    <item android:id="@+id/searchbtn"
+        android:title="Search"
+        />
+
+
+    <item android:id="@+id/accountbtn"
+
+        android:title="Account"
+        />
+
+
+</menu>

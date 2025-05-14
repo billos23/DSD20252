@@ -11,13 +11,17 @@
         android:theme="@style/Theme.DSD20252">
 
         <!-- Our real entry point -->
-        <activity android:name=".ui.FilterActivity"
+        <activity android:name=".ui.HomeActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+
+        <activity android:name=".ui.FilterActivity"
+            android:parentActivityName=".ui.FilterActivity"
+            android:exported="false"/>
 
         <activity android:name=".ui.ResultsActivity"
             android:parentActivityName=".ui.FilterActivity"
@@ -27,7 +31,9 @@
             android:parentActivityName=".ui.ResultsActivity"
             android:exported="false"/>
 
-        <activity android:name=".ui.SettingsActivity"
+        <activity
+            android:name=".ui.SettingsActivity"
+            android:theme="@style/Theme.AppCompat.Light.DarkActionBar"
             android:parentActivityName=".ui.FilterActivity"
             android:exported="false"/>
 

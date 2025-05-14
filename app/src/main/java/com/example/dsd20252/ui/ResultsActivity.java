@@ -26,7 +26,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
+// RecyclerView
 public class ResultsActivity extends AppCompatActivity {
     private static final String TAG = "ResultsActivity";
 
@@ -77,7 +77,7 @@ public class ResultsActivity extends AppCompatActivity {
         new Thread(() -> {
             List<Store> allStores = new ArrayList<>();
             try {
-                String[] rootItems = getAssets().list("");
+                String[] rootItems = getAssets().list("C:\\Users\\billo\\AndroidStudioProjects\\DSD202522\\app\\src\\main\\assets");
                 if (rootItems != null) {
                     for (String item : rootItems) {
                         if (item.toLowerCase().endsWith(".json")) {

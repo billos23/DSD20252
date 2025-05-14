@@ -12,19 +12,57 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Master Host"
+            android:text="Username"
             android:textStyle="bold"/>
 
         <EditText
             android:id="@+id/etHost"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="e.g. 10.0.2.2"/>
+            android:hint="e.g. Billos"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Master Port"
+            android:text="Email"
+            android:textStyle="bold"/>
+
+        <EditText
+            android:id="@+id/etTest"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="e.g. nicknanos@aueb.gr"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Payment Preferance"
+            android:textStyle="bold"/>
+
+        <EditText
+            android:id="@+id/etTest2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="e.g. Natalias CC"/>
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Travelling"
+            android:textStyle="bold"/>
+
+        <EditText
+            android:id="@+id/etTest1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="e.g. i mean random stuff"/>
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Chane Password"
             android:layout_marginTop="16dp"
             android:textStyle="bold"/>
 
