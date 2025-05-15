@@ -82,4 +82,24 @@
             android:background="@drawable/bg_category_tag"/>
     </LinearLayout>
 
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+
+        android:id="@+id/bottomNav"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="@drawable/bottom_nav_bg"
+        app:elevation="10dp"
+        app:itemIconSize="25dp"
+        app:itemIconTint="@drawable/bottom_nav_selector"
+        app:itemRippleColor="@android:color/background_dark"
+        app:labelVisibilityMode="unlabeled"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/llMeta"
+        app:menu="@menu/activity_menu" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
+

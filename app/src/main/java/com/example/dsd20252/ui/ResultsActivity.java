@@ -77,7 +77,7 @@ public class ResultsActivity extends AppCompatActivity {
         new Thread(() -> {
             List<Store> allStores = new ArrayList<>();
             try {
-                String[] rootItems = getAssets().list("C:\\Users\\billo\\AndroidStudioProjects\\DSD202522\\app\\src\\main\\assets");
+                String[] rootItems = getAssets().list("C:\\Users\\billo\\AndroidStudioProjects\\DSD202522\\app\\src\\main\\assets\\pizza-fun");
                 if (rootItems != null) {
                     for (String item : rootItems) {
                         if (item.toLowerCase().endsWith(".json")) {
