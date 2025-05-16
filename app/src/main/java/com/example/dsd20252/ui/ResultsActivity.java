@@ -16,20 +16,18 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.dsd20252.R;
+import com.example.dsd20252.model.SearchRequest;
 import com.example.dsd20252.model.Store;
 import com.example.dsd20252.parser.StoreParser;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 
-import org.json.JSONArray;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-// RecyclerView
+
 public class ResultsActivity extends AppCompatActivity {
     private static final String TAG = "ResultsActivity";
 
@@ -37,41 +35,42 @@ public class ResultsActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private TextView tvEmpty;
 
-    // filter criteria from intent
+    // Filter criteria from intent
     private int minStars = 1;
     private List<String> categoryFilters = new ArrayList<>();
+    private List<String> priceCategories = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_results);
 
-        // DEBUG: show asset list
-        try {
-            String[] rootItems = getAssets().list("");
-            Toast.makeText(
-                    this,
-                    "Assets: " + Arrays.toString(rootItems),
-                    Toast.LENGTH_LONG
-            ).show();
-        } catch (IOException e) {
-            Log.e(TAG, "Failed to list assets", e);
-        }
+        // UI Components
+        progressBar = findViewById(R.id.progressBar);
+        recyclerView = findViewById(R.id.recyclerView);
+        tvEmpty = findViewById(R.id.tvEmpty);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        // read filter parameters
-        Intent intent = getIntent();
-        minStars = intent.getIntExtra("minStars", 1);
-        List<String> categories = intent.getStringArrayListExtra("categoryFilters");
-        if (categories != null) categoryFilters = categories;
-
+        // Set title and back button
         setTitle("Search Results");
         ActionBar ab = getSupportActionBar();
         if (ab != null) ab.setDisplayHomeAsUpEnabled(true);
 
-        progressBar  = findViewById(R.id.progressBar);
-        recyclerView = findViewById(R.id.recyclerView);
-        tvEmpty      = findViewById(R.id.tvEmpty);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        // Read filter parameters from the intent
+        Intent intent = getIntent();
+        if (intent.hasExtra("searchReq")) {
+            SearchRequest req = (SearchRequest) intent.getSerializableExtra("searchReq");
+            if (req != null) {
+                minStars = req.getMinStars();
+                categoryFilters = req.getCategories();
+                priceCategories = req.getPriceCategories();
+            }
+        } else {
+            // Backward compatibility with old intent format
+            minStars = intent.getIntExtra("minStars", 1);
+            List<String> categories = intent.getStringArrayListExtra("categoryFilters");
+            if (categories != null) categoryFilters = categories;
+        }
 
         // Initialize Bottom Navigation
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNav);
@@ -100,40 +99,105 @@ public class ResultsActivity extends AppCompatActivity {
             }
         });
 
+        // Load the stores
         loadStoresFromAssets();
     }
 
     private void loadStoresFromAssets() {
+        progressBar.setVisibility(View.VISIBLE);
+        recyclerView.setVisibility(View.GONE);
+        tvEmpty.setVisibility(View.GONE);
+
         new Thread(() -> {
             List<Store> allStores = new ArrayList<>();
+
             try {
-                String[] rootItems = getAssets().list("C:\\Users\\billo\\AndroidStudioProjects\\DSD202522\\app\\src\\main\\assets\\pizza-fun");
-                if (rootItems != null) {
-                    for (String item : rootItems) {
-                        if (item.toLowerCase().endsWith(".json")) {
-                            Store s = parseFromAssetPath(item);
-                            if (s != null) allStores.add(s);
-                        } else {
-                            String[] sub = getAssets().list(item);
-                            if (sub != null) {
-                                for (String file : sub) {
-                                    if (file.toLowerCase().endsWith(".json")) {
-                                        Store s = parseFromAssetPath(item + "/" + file);
-                                        if (s != null) allStores.add(s);
+                // Search for JSON files in our primary target directories
+                String[] targetDirs = {"pizza-fun", "souvlaki-house", "vegan-corner"};
+                boolean foundAnyTargetDirs = false;
+
+                for (String dir : targetDirs) {
+                    try {
+                        String[] files = getAssets().list(dir);
+                        if (files != null && files.length > 0) {
+                            foundAnyTargetDirs = true;
+                            for (String file : files) {
+                                if (file.toLowerCase().endsWith(".json")) {
+                                    String path = dir + "/" + file;
+                                    Store store = parseFromAssetPath(path);
+                                    if (store != null) {
+                                        // Force categories to match directory names to ensure consistency
+                                        if (dir.equals("pizza-fun")) {
+                                            store.setFoodCategory("pizzeria");
+                                        } else if (dir.equals("souvlaki-house")) {
+                                            store.setFoodCategory("souvlaki_house");
+                                        } else if (dir.equals("vegan-corner")) {
+                                            store.setFoodCategory("VeganCorner");
+                                        }
+                                        allStores.add(store);
                                     }
                                 }
                             }
                         }
+                    } catch (IOException e) {
+                        Log.e(TAG, "Error reading directory: " + dir, e);
                     }
                 }
+
+                // If we couldn't find our target directories, search all assets
+                if (!foundAnyTargetDirs) {
+                    searchDirectoryRecursively("", allStores);
+                }
+
             } catch (Exception e) {
                 Log.e(TAG, "Error reading assets", e);
+                runOnUiThread(() -> Toast.makeText(
+                        ResultsActivity.this,
+                        "Error loading stores: " + e.getMessage(),
+                        Toast.LENGTH_SHORT).show());
             }
-            Log.d(TAG, "Total stores loaded before filtering: " + allStores.size());
+
             // Apply filters and show
-            List<Store> filtered = applyFilters(allStores);
-            runOnUiThread(() -> showStores(filtered));
+            final List<Store> filtered = applyFilters(allStores);
+            runOnUiThread(() -> {
+                showStores(filtered);
+                if (filtered.isEmpty() && !allStores.isEmpty()) {
+                    Toast.makeText(ResultsActivity.this,
+                            "No stores match your filters. Try different criteria.", Toast.LENGTH_SHORT).show();
+                }
+            });
         }).start();
+    }
+
+    private void searchDirectoryRecursively(String dirPath, List<Store> stores) throws IOException {
+        String[] list = getAssets().list(dirPath);
+        if (list == null || list.length == 0) return;
+
+        for (String file : list) {
+            String fullPath = dirPath.isEmpty() ? file : dirPath + "/" + file;
+
+            // Check if it's a directory
+            String[] subFiles = getAssets().list(fullPath);
+            if (subFiles != null && subFiles.length > 0) {
+                // It's a directory, search recursively
+                searchDirectoryRecursively(fullPath, stores);
+            } else if (file.toLowerCase().endsWith(".json")) {
+                // It's a JSON file
+                Store store = parseFromAssetPath(fullPath);
+                if (store != null) {
+                    // Set category based on path to ensure proper matching
+                    String lowerPath = fullPath.toLowerCase();
+                    if (lowerPath.contains("pizza")) {
+                        store.setFoodCategory("pizzeria");
+                    } else if (lowerPath.contains("souvlaki")) {
+                        store.setFoodCategory("souvlaki_house");
+                    } else if (lowerPath.contains("vegan")) {
+                        store.setFoodCategory("VeganCorner");
+                    }
+                    stores.add(store);
+                }
+            }
+        }
     }
 
     private Store parseFromAssetPath(String assetPath) {
@@ -142,27 +206,55 @@ public class ResultsActivity extends AppCompatActivity {
             byte[] buffer = new byte[size];
             is.read(buffer);
             String json = new String(buffer, StandardCharsets.UTF_8);
-            Log.d(TAG, "Raw JSON from " + assetPath + ": " + json);
-            // parse using JSON-to-Store string parser
+
             return StoreParser.parseStoreFromJsonString(json);
         } catch (Exception e) {
-            Log.e(TAG, "Failed to parse asset JSON: " + assetPath, e);
+            Log.e(TAG, "Error parsing JSON from " + assetPath + ": " + e.getMessage());
             return null;
         }
     }
 
     /**
-     * Filters stores by minimum stars and selected categories.
+     * Applies filtering
      */
     private List<Store> applyFilters(List<Store> stores) {
         List<Store> result = new ArrayList<>();
+
         for (Store s : stores) {
             if (s == null) continue;
-            if (s.getStars() < minStars) continue;
-            if (!categoryFilters.isEmpty() && !categoryFilters.contains(s.getFoodCategory())) continue;
+
+            // Check star rating
+            if (s.getStars() < minStars) {
+                continue;
+            }
+
+            // Check category
+            if (!categoryFilters.isEmpty()) {
+                boolean categoryMatch = false;
+                for (String category : categoryFilters) {
+                    // Case-insensitive matching
+                    if (s.getFoodCategory().equalsIgnoreCase(category)) {
+                        categoryMatch = true;
+                        break;
+                    }
+                }
+
+                if (!categoryMatch) {
+                    continue;
+                }
+            }
+
+            // Check price category
+            if (!priceCategories.isEmpty()) {
+                if (s.getPriceCategory() == null || !priceCategories.contains(s.getPriceCategory())) {
+                    continue;
+                }
+            }
+
+            // All criteria passed, add to results
             result.add(s);
         }
-        Log.d(TAG, "Total stores after filtering: " + result.size());
+
         return result;
     }
 

@@ -1,6 +1,5 @@
 package com.example.dsd20252.ui;
 
-import com.example.dsd20252.parser.StoreParser;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -106,11 +105,11 @@ public class FilterActivity extends AppCompatActivity {
 
             int minStars = seekStars.getProgress() + 1;
 
-            List<String> priceCats = new ArrayList<>();
-            if (cbDollar.isChecked())       priceCats.add("$");
-            if (cbDoubleDollar.isChecked()) priceCats.add("$$");
-            if (cbTripleDollar.isChecked()) priceCats.add("$$$");
-            if (priceCats.isEmpty()) {
+            List<String> priceCategories = new ArrayList<>();
+            if (cbDollar.isChecked())       priceCategories.add("$");
+            if (cbDoubleDollar.isChecked()) priceCategories.add("$$");
+            if (cbTripleDollar.isChecked()) priceCategories.add("$$$");
+            if (priceCategories.isEmpty()) {
                 Toast.makeText(
                         this,
                         getString(R.string.err_select_price),
@@ -119,9 +118,10 @@ public class FilterActivity extends AppCompatActivity {
                 return;
             }
 
+            // Using normalized category names that match StoreParser
             List<String> foodCats = new ArrayList<>();
-            if (cbPizzeria.isChecked())  foodCats.add("pizzeria");
-            if (cbsouvlaki_house.isChecked())  foodCats.add("souvlaki_house");
+            if (cbPizzeria.isChecked())     foodCats.add("pizzeria");
+            if (cbsouvlaki_house.isChecked()) foodCats.add("souvlaki_house");
             if (cbVeganCorner.isChecked())    foodCats.add("VeganCorner");
             if (foodCats.isEmpty()) {
                 Toast.makeText(
@@ -133,7 +133,7 @@ public class FilterActivity extends AppCompatActivity {
             }
 
             SearchRequest req = new SearchRequest(
-                    lat, lon, foodCats, minStars, priceCats
+                    lat, lon, foodCats, minStars, priceCategories
             );
             Intent intent = new Intent(this, ResultsActivity.class);
             intent.putExtra("searchReq", req);
