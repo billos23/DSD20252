@@ -1,12 +1,17 @@
 package com.example.dsd20252.ui;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.navigation.NavigationBarView;
 
 import com.example.dsd20252.R;
 
@@ -22,6 +27,7 @@ public class SettingsActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setTitle(R.string.btn_settings);
 
+        // Initialize form fields
         EditText etHost = findViewById(R.id.etHost);
         EditText etPort = findViewById(R.id.etPort);
         Button btnSave  = findViewById(R.id.btnSaveSettings);
@@ -51,6 +57,33 @@ public class SettingsActivity extends AppCompatActivity {
 
             Toast.makeText(this, getString(R.string.toast_settings_saved), Toast.LENGTH_SHORT).show();
             finish();
+        });
+
+        // Initialize Bottom Navigation
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNav);
+        bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                int itemId = item.getItemId();
+
+                if (itemId == R.id.homeBtn) {
+                    // Navigate to Home
+                    Intent homeIntent = new Intent(SettingsActivity.this, HomeActivity.class);
+                    startActivity(homeIntent);
+                    return true;
+                } else if (itemId == R.id.searchbtn) {
+                    // Navigate to Search
+                    Intent searchIntent = new Intent(SettingsActivity.this, FilterActivity.class);
+                    startActivity(searchIntent);
+                    return true;
+                } else if (itemId == R.id.accountbtn) {
+                    // Navigate to Account
+                    Intent accountIntent = new Intent(SettingsActivity.this, SettingsActivity.class);
+                    startActivity(accountIntent);
+                    return true;
+                }
+                return false;
+            }
         });
     }
 }

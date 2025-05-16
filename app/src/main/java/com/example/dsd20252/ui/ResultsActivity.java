@@ -9,6 +9,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -17,6 +18,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.dsd20252.R;
 import com.example.dsd20252.model.Store;
 import com.example.dsd20252.parser.StoreParser;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.navigation.NavigationBarView;
 
 import org.json.JSONArray;
 
@@ -69,6 +72,33 @@ public class ResultsActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.recyclerView);
         tvEmpty      = findViewById(R.id.tvEmpty);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        // Initialize Bottom Navigation
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNav);
+        bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                int itemId = item.getItemId();
+
+                if (itemId == R.id.homeBtn) {
+                    // Navigate to Home
+                    Intent homeIntent = new Intent(ResultsActivity.this, HomeActivity.class);
+                    startActivity(homeIntent);
+                    return true;
+                } else if (itemId == R.id.searchbtn) {
+                    // Navigate to Search
+                    Intent searchIntent = new Intent(ResultsActivity.this, FilterActivity.class);
+                    startActivity(searchIntent);
+                    return true;
+                } else if (itemId == R.id.accountbtn) {
+                    // Navigate to Account
+                    Intent accountIntent = new Intent(ResultsActivity.this, SettingsActivity.class);
+                    startActivity(accountIntent);
+                    return true;
+                }
+                return false;
+            }
+        });
 
         loadStoresFromAssets();
     }

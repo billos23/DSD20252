@@ -1,5 +1,6 @@
 package com.example.dsd20252.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
@@ -9,6 +10,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.dsd20252.R;
@@ -18,6 +20,8 @@ import com.example.dsd20252.model.Product;
 import com.example.dsd20252.model.Store;
 import com.example.dsd20252.network.NetworkClient;
 import com.example.dsd20252.parser.StoreParser;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.navigation.NavigationBarView;
 
 import org.json.JSONException;
 
@@ -131,6 +135,36 @@ public class StoreDetailActivity extends AppCompatActivity {
                     ).show());
                 }
             }).start();
+        });
+
+        // Initialize Bottom Navigation
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNav);
+        bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                int itemId = item.getItemId();
+
+                if (itemId == R.id.homeBtn) {
+                    // Navigate to Home
+                    Intent homeIntent = new Intent(StoreDetailActivity.this, HomeActivity.class);
+                    homeIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(homeIntent);
+                    return true;
+                } else if (itemId == R.id.searchbtn) {
+                    // Navigate to Search
+                    Intent searchIntent = new Intent(StoreDetailActivity.this, FilterActivity.class);
+                    searchIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(searchIntent);
+                    return true;
+                } else if (itemId == R.id.accountbtn) {
+                    // Navigate to Account
+                    Intent accountIntent = new Intent(StoreDetailActivity.this, SettingsActivity.class);
+                    accountIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(accountIntent);
+                    return true;
+                }
+                return false;
+            }
         });
     }
 
