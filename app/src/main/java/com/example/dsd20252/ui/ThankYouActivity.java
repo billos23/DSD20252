@@ -108,8 +108,7 @@ public class ThankYouActivity extends AppCompatActivity {
     }
 
     private void submitRating() {
-        // Here you could send the rating to your server
-        // For now, we'll just show a toast and then go home
+
 
         String ratingText = selectedRating == 1 ? "star" : "stars";
         String message = "Thank you for rating " +

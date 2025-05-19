@@ -94,6 +94,13 @@ public class FilterActivity extends AppCompatActivity {
                 }
                 lat = Double.parseDouble(latStr);
                 lon = Double.parseDouble(lonStr);
+
+                // Validate coordinates
+                if (lat < -90 || lat > 90 || lon < -180 || lon > 180) {
+                    Toast.makeText(this, "Invalid coordinates. Latitude: -90 to 90, Longitude: -180 to 180",
+                            Toast.LENGTH_SHORT).show();
+                    return;
+                }
             } catch (NumberFormatException ex) {
                 Toast.makeText(
                         this,
@@ -132,9 +139,13 @@ public class FilterActivity extends AppCompatActivity {
                 return;
             }
 
+            // Create search request according to assignment requirements
             SearchRequest req = new SearchRequest(
                     lat, lon, foodCats, minStars, priceCategories
             );
+
+            Toast.makeText(this, "Searching stores within 5km radius...", Toast.LENGTH_SHORT).show();
+
             Intent intent = new Intent(this, ResultsActivity.class);
             intent.putExtra("searchReq", req);
             startActivity(intent);

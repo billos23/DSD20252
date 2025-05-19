@@ -2,7 +2,11 @@ package com.example.dsd20252.model;
 
 import java.io.Serializable;
 import java.util.List;
-//-------------------NOT IN USE--------------------------\\
+
+/**
+ * Request object for searching stores with filters
+ * Used to communicate with Master server via TCP
+ */
 public class SearchRequest implements Serializable {
     private double latitude;
     private double longitude;

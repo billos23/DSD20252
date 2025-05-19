@@ -1,7 +1,10 @@
 package com.example.dsd20252.model;
 
 import java.io.Serializable;
-//------------------------REDUNDANT-----------------------------\\
+
+/**
+ * Response object for purchase operations
+ */
 public class BuyResponse implements Serializable {
     private boolean success;
     private String message;

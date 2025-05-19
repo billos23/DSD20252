@@ -20,7 +20,7 @@ public class NetworkClient {
     private final String masterHost;
     private final int    masterPort;
 
-    private static final String DEFAULT_HOST = "http://10.0.2.2:8080";
+    private static final String DEFAULT_HOST = "10.0.2.2"; // Android emulator host
     private static final int    DEFAULT_PORT = 5555;
 
     /** Default: use defaults */
