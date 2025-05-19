@@ -5,7 +5,7 @@
   "FoodCategory": "pizzeria",
   "Stars": 4,
   "NoOfVotes": 120,
-  "StoreLogo": "/usr/bin/images/pizza.png",
+  "StoreLogo": "C:\\Users\\billo\\AndroidStudioProjects\\DSD202522\\app\\src\\main\\res\\drawable\\pizzafun.png",
   "Products": [
     {
       "ProductName": "Margarita",

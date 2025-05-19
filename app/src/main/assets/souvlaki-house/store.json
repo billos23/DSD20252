@@ -5,7 +5,7 @@
   "FoodCategory": "souvlaki",
   "Stars": 5,
   "NoOfVotes": 230,
-  "StoreLogo": "/usr/bin/images/souvlaki.png",
+  "StoreLogo": "C:\\Users\\billo\\AndroidStudioProjects\\DSD202522\\app\\src\\main\\res\\drawable\\souvlakihouse.png",
   "Products": [
     {
       "ProductName": "Kalamaki",
