@@ -1,97 +1,115 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/homebackground"
+    android:orientation="vertical"
     android:padding="24dp"
-    tools:context=".ui.ThankYouActivity">
+    android:gravity="center">
 
-    <LinearLayout
-        android:layout_width="match_parent"
+    <!-- Thank You Message -->
+    <TextView
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:orientation="vertical"
-        android:gravity="center">
+        android:text="Thank You!"
+        android:textSize="32sp"
+        android:textStyle="bold"
+        android:textColor="#2E7D32"
+        android:layout_marginBottom="16dp" />
 
-        <!-- Success Icon -->
+    <!-- Store Name -->
+    <TextView
+        android:id="@+id/tvStoreName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Store Name"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="8dp" />
+
+    <!-- Order Details -->
+    <TextView
+        android:id="@+id/tvOrderDetails"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Your order has been processed"
+        android:textSize="16sp"
+        android:textAlignment="center"
+        android:layout_marginBottom="32dp" />
+
+    <!-- Rating Section -->
+    <TextView
+        android:id="@+id/tvRatingPrompt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="How was your experience?"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Star Rating -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="24dp">
+
         <ImageView
-            android:layout_width="120dp"
-            android:layout_height="120dp"
-            android:src="@android:drawable/ic_dialog_info"
-            android:tint="@android:color/holo_green_dark"
-            android:layout_marginBottom="32dp" />
+            android:id="@+id/star1"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_margin="4dp"
+            android:src="@android:drawable/btn_star_big_off"
+            android:contentDescription="1 star" />
 
-        <!-- Thank You Message -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Thank You!"
-            android:textSize="32sp"
-            android:textStyle="bold"
-            android:textColor="@android:color/holo_green_dark"
-            android:layout_marginBottom="16dp" />
+        <ImageView
+            android:id="@+id/star2"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_margin="4dp"
+            android:src="@android:drawable/btn_star_big_off"
+            android:contentDescription="2 stars" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Your purchase has been completed successfully"
-            android:textSize="18sp"
-            android:textColor="@android:color/black"
-            android:gravity="center"
-            android:layout_marginBottom="8dp" />
+        <ImageView
+            android:id="@+id/star3"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_margin="4dp"
+            android:src="@android:drawable/btn_star_big_off"
+            android:contentDescription="3 stars" />
 
-        <!-- Order Details -->
-        <TextView
-            android:id="@+id/tvOrderDetails"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="14sp"
-            android:textColor="@android:color/darker_gray"
-            android:gravity="center"
-            android:layout_marginBottom="32dp"
-            tools:text="Order total: €17.70" />
+        <ImageView
+            android:id="@+id/star4"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_margin="4dp"
+            android:src="@android:drawable/btn_star_big_off"
+            android:contentDescription="4 stars" />
 
-        <!-- Return Button -->
-        <Button
-            android:id="@+id/btnReturnHome"
-            android:layout_width="200dp"
-            android:layout_height="56dp"
-            android:text="Return to Home"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:background="@android:color/holo_blue_dark"
-            android:textColor="@android:color/white"
-            android:layout_marginBottom="24dp" />
+        <ImageView
+            android:id="@+id/star5"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_margin="4dp"
+            android:src="@android:drawable/btn_star_big_off"
+            android:contentDescription="5 stars" />
 
     </LinearLayout>
 
-    <!-- Store Information at Bottom -->
-    <LinearLayout
-        android:layout_width="match_parent"
+    <!-- Submit Rating Button -->
+    <Button
+        android:id="@+id/btnSubmitRating"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:orientation="vertical"
-        android:gravity="center"
-        android:layout_marginBottom="16dp">
+        android:text="Submit Rating"
+        android:layout_marginBottom="16dp"
+        android:paddingHorizontal="32dp" />
 
-        <TextView
-            android:id="@+id/tvStoreName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:textColor="@android:color/black"
-            android:layout_marginBottom="4dp"
-            tools:text="Pizza Fun" />
+    <!-- Return Home Button -->
+    <Button
+        android:id="@+id/btnReturnHome"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Return to Home"
+        android:paddingHorizontal="32dp" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Thank you for choosing us!"
-            android:textSize="12sp"
-            android:textColor="@android:color/darker_gray" />
-
-    </LinearLayout>
-
-</RelativeLayout>
+</LinearLayout>
