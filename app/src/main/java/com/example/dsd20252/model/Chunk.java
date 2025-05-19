@@ -34,20 +34,7 @@ public class Chunk implements Serializable {
         return data;
     }
 
-    /*
-    public int getLenght(){
-        try {
-            ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
-            ObjectOutputStream objectStream = new ObjectOutputStream(byteStream);
-            objectStream.writeObject(this); // Serialize the current Chunk object
-            objectStream.close();
-            return byteStream.toByteArray().length;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return 0;
-        }
-    }
-    */
+
     @Override
     public boolean equals(Object other) {
         if (other == null){

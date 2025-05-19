@@ -58,9 +58,7 @@ public class HomeActivity extends AppCompatActivity {
         items.add("Home Item 2");
         items.add("Home Item 3");
 
-        // Create and set the adapter for RecyclerView
-        // SimpleAdapter adapter = new SimpleAdapter(items);
-        // recyclerView.setAdapter(adapter);
+
 
         // Set click listener for the Continue button to navigate to FilterActivity
         btnContinue.setOnClickListener(new View.OnClickListener() {

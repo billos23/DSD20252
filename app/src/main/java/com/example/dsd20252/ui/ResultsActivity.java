@@ -2,7 +2,6 @@ package com.example.dsd20252.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -29,13 +28,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ResultsActivity extends AppCompatActivity {
-    private static final String TAG = "ResultsActivity";
-
     private ProgressBar progressBar;
     private RecyclerView recyclerView;
     private TextView tvEmpty;
 
-    // Filter criteria from intent
     private int minStars = 1;
     private List<String> categoryFilters = new ArrayList<>();
     private List<String> priceCategories = new ArrayList<>();
@@ -45,18 +41,15 @@ public class ResultsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_results);
 
-        // UI Components
         progressBar = findViewById(R.id.progressBar);
         recyclerView = findViewById(R.id.recyclerView);
         tvEmpty = findViewById(R.id.tvEmpty);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        // Set title and back button
         setTitle("Search Results");
         ActionBar ab = getSupportActionBar();
         if (ab != null) ab.setDisplayHomeAsUpEnabled(true);
 
-        // Read filter parameters from the intent
         Intent intent = getIntent();
         if (intent.hasExtra("searchReq")) {
             SearchRequest req = (SearchRequest) intent.getSerializableExtra("searchReq");
@@ -66,13 +59,11 @@ public class ResultsActivity extends AppCompatActivity {
                 priceCategories = req.getPriceCategories();
             }
         } else {
-            // Backward compatibility with old intent format
             minStars = intent.getIntExtra("minStars", 1);
             List<String> categories = intent.getStringArrayListExtra("categoryFilters");
             if (categories != null) categoryFilters = categories;
         }
 
-        // Initialize Bottom Navigation
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNav);
         bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @Override
@@ -80,17 +71,14 @@ public class ResultsActivity extends AppCompatActivity {
                 int itemId = item.getItemId();
 
                 if (itemId == R.id.homeBtn) {
-                    // Navigate to Home
                     Intent homeIntent = new Intent(ResultsActivity.this, HomeActivity.class);
                     startActivity(homeIntent);
                     return true;
                 } else if (itemId == R.id.searchbtn) {
-                    // Navigate to Search
                     Intent searchIntent = new Intent(ResultsActivity.this, FilterActivity.class);
                     startActivity(searchIntent);
                     return true;
                 } else if (itemId == R.id.accountbtn) {
-                    // Navigate to Account
                     Intent accountIntent = new Intent(ResultsActivity.this, SettingsActivity.class);
                     startActivity(accountIntent);
                     return true;
@@ -99,7 +87,6 @@ public class ResultsActivity extends AppCompatActivity {
             }
         });
 
-        // Load the stores
         loadStoresFromAssets();
     }
 
@@ -112,7 +99,6 @@ public class ResultsActivity extends AppCompatActivity {
             List<Store> allStores = new ArrayList<>();
 
             try {
-                // Search for JSON files in our primary target directories
                 String[] targetDirs = {"pizza-fun", "souvlaki-house", "vegan-corner"};
                 boolean foundAnyTargetDirs = false;
 
@@ -126,7 +112,6 @@ public class ResultsActivity extends AppCompatActivity {
                                     String path = dir + "/" + file;
                                     Store store = parseFromAssetPath(path);
                                     if (store != null) {
-                                        // Force categories to match directory names to ensure consistency
                                         if (dir.equals("pizza-fun")) {
                                             store.setFoodCategory("pizzeria");
                                         } else if (dir.equals("souvlaki-house")) {
@@ -140,24 +125,21 @@ public class ResultsActivity extends AppCompatActivity {
                             }
                         }
                     } catch (IOException e) {
-                        Log.e(TAG, "Error reading directory: " + dir, e);
+                        // Error reading directory, continue with next
                     }
                 }
 
-                // If we couldn't find our target directories, search all assets
                 if (!foundAnyTargetDirs) {
                     searchDirectoryRecursively("", allStores);
                 }
 
             } catch (Exception e) {
-                Log.e(TAG, "Error reading assets", e);
                 runOnUiThread(() -> Toast.makeText(
                         ResultsActivity.this,
                         "Error loading stores: " + e.getMessage(),
                         Toast.LENGTH_SHORT).show());
             }
 
-            // Apply filters and show
             final List<Store> filtered = applyFilters(allStores);
             runOnUiThread(() -> {
                 showStores(filtered);
@@ -176,16 +158,12 @@ public class ResultsActivity extends AppCompatActivity {
         for (String file : list) {
             String fullPath = dirPath.isEmpty() ? file : dirPath + "/" + file;
 
-            // Check if it's a directory
             String[] subFiles = getAssets().list(fullPath);
             if (subFiles != null && subFiles.length > 0) {
-                // It's a directory, search recursively
                 searchDirectoryRecursively(fullPath, stores);
             } else if (file.toLowerCase().endsWith(".json")) {
-                // It's a JSON file
                 Store store = parseFromAssetPath(fullPath);
                 if (store != null) {
-                    // Set category based on path to ensure proper matching
                     String lowerPath = fullPath.toLowerCase();
                     if (lowerPath.contains("pizza")) {
                         store.setFoodCategory("pizzeria");
@@ -209,30 +187,23 @@ public class ResultsActivity extends AppCompatActivity {
 
             return StoreParser.parseStoreFromJsonString(json);
         } catch (Exception e) {
-            Log.e(TAG, "Error parsing JSON from " + assetPath + ": " + e.getMessage());
             return null;
         }
     }
 
-    /**
-     * Applies filtering
-     */
     private List<Store> applyFilters(List<Store> stores) {
         List<Store> result = new ArrayList<>();
 
         for (Store s : stores) {
             if (s == null) continue;
 
-            // Check star rating
             if (s.getStars() < minStars) {
                 continue;
             }
 
-            // Check category
             if (!categoryFilters.isEmpty()) {
                 boolean categoryMatch = false;
                 for (String category : categoryFilters) {
-                    // Case-insensitive matching
                     if (s.getFoodCategory().equalsIgnoreCase(category)) {
                         categoryMatch = true;
                         break;
@@ -244,14 +215,12 @@ public class ResultsActivity extends AppCompatActivity {
                 }
             }
 
-            // Check price category
             if (!priceCategories.isEmpty()) {
                 if (s.getPriceCategory() == null || !priceCategories.contains(s.getPriceCategory())) {
                     continue;
                 }
             }
 
-            // All criteria passed, add to results
             result.add(s);
         }
 

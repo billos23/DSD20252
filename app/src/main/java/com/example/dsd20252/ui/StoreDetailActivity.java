@@ -2,7 +2,6 @@ package com.example.dsd20252.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -33,10 +32,7 @@ import java.util.List;
 import java.util.Map;
 
 public class StoreDetailActivity extends AppCompatActivity {
-    private static final String TAG = "StoreDetailActivity";
     private Store store;
-
-    // Cart management
     private Map<String, CartItem> cartItems = new HashMap<>();
     private LinearLayout cartTotalSection;
     private TextView tvCartItems;
@@ -49,37 +45,25 @@ public class StoreDetailActivity extends AppCompatActivity {
 
         try {
             setContentView(R.layout.activity_store_detail);
-            Log.d(TAG, "Layout set successfully");
 
-            // Get the store object from the intent
             Intent intent = getIntent();
             if (intent != null && intent.hasExtra("store")) {
                 store = (Store) intent.getSerializableExtra("store");
-                Log.d(TAG, "Store object received: " + (store != null ? store.getStoreName() : "null"));
             }
 
             if (store == null) {
-                Log.e(TAG, "Store object is null");
                 Toast.makeText(this, "Store data not found", Toast.LENGTH_LONG).show();
                 finish();
                 return;
             }
 
-            // Set up action bar safely
-            try {
-                if (getSupportActionBar() != null) {
-                    getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-                    setTitle(store.getStoreName());
-                }
-            } catch (Exception e) {
-                Log.e(TAG, "Error setting up action bar", e);
+            if (getSupportActionBar() != null) {
+                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+                setTitle(store.getStoreName());
             }
 
-            // Initialize UI components safely
             initializeViews();
-
         } catch (Exception e) {
-            Log.e(TAG, "Error in onCreate", e);
             Toast.makeText(this, "Error loading store details", Toast.LENGTH_LONG).show();
             finish();
         }
@@ -87,7 +71,6 @@ public class StoreDetailActivity extends AppCompatActivity {
 
     private void initializeViews() {
         try {
-            // Find all views
             TextView tvStoreName = findViewById(R.id.tvDetailName);
             TextView tvCoords = findViewById(R.id.tvDetailCoords);
             TextView tvStars = findViewById(R.id.tvDetailStars);
@@ -99,23 +82,19 @@ public class StoreDetailActivity extends AppCompatActivity {
             EditText etQuantity = findViewById(R.id.etQuantity);
             Button btnBuy = findViewById(R.id.btnBuy);
 
-            // Cart related views
             cartTotalSection = findViewById(R.id.cartTotalSection);
             tvCartItems = findViewById(R.id.tvCartItems);
             tvCartTotal = findViewById(R.id.tvCartTotal);
             btnCompletePurchase = findViewById(R.id.btnCompletePurchase);
 
-            // Check if all views were found
             if (tvStoreName == null || tvCoords == null || tvStars == null ||
                     tvCategory == null || tvPriceRange == null || tvVotes == null ||
                     ivStoreLogo == null || spinnerProducts == null ||
                     etQuantity == null || btnBuy == null) {
-                Log.e(TAG, "Some views are null - layout file might be incorrect");
                 Toast.makeText(this, "Layout error - some views not found", Toast.LENGTH_LONG).show();
                 return;
             }
 
-            // Populate store information
             tvStoreName.setText(store.getStoreName());
             tvCoords.setText(String.format("%.6f, %.6f", store.getLatitude(), store.getLongitude()));
             tvStars.setText(String.format("★ %d", store.getStars()));
@@ -123,13 +102,9 @@ public class StoreDetailActivity extends AppCompatActivity {
             tvPriceRange.setText(store.getPriceCategory() != null ? store.getPriceCategory() : "N/A");
             tvVotes.setText(String.format("%d votes", store.getNoOfVotes()));
 
-            // Load store logo if available
             loadStoreLogo(ivStoreLogo);
-
-            // Set up products spinner
             setupProductsSpinner(spinnerProducts);
 
-            // Set up add to cart button
             btnBuy.setOnClickListener(v -> {
                 String selectedProduct = (String) spinnerProducts.getSelectedItem();
                 if (selectedProduct == null || selectedProduct.equals("No products available")) {
@@ -153,28 +128,20 @@ public class StoreDetailActivity extends AppCompatActivity {
                     return;
                 }
 
-                // Add to cart
                 addToCart(selectedProduct, quantity);
-
-                // Clear quantity field
                 etQuantity.setText("");
             });
 
-            // Set up complete purchase button
             btnCompletePurchase.setOnClickListener(v -> completePurchase());
-
-            // Initialize Bottom Navigation
             initializeBottomNavigation();
 
         } catch (Exception e) {
-            Log.e(TAG, "Error initializing views", e);
             Toast.makeText(this, "Error setting up views", Toast.LENGTH_LONG).show();
         }
     }
 
     private void addToCart(String selectedProduct, int quantity) {
         try {
-            // Extract product name and find the product details
             String productName = extractProductName(selectedProduct);
             Product product = findProductByName(productName);
 
@@ -183,7 +150,6 @@ public class StoreDetailActivity extends AppCompatActivity {
                 return;
             }
 
-            // Check if item already exists in cart
             if (cartItems.containsKey(productName)) {
                 CartItem existingItem = cartItems.get(productName);
                 existingItem.setQuantity(existingItem.getQuantity() + quantity);
@@ -196,11 +162,8 @@ public class StoreDetailActivity extends AppCompatActivity {
                         quantity, productName), Toast.LENGTH_SHORT).show();
             }
 
-            // Update cart display
             updateCartDisplay();
-
         } catch (Exception e) {
-            Log.e(TAG, "Error adding to cart", e);
             Toast.makeText(this, "Error adding item to cart", Toast.LENGTH_SHORT).show();
         }
     }
@@ -225,7 +188,6 @@ public class StoreDetailActivity extends AppCompatActivity {
             cartTotalSection.setVisibility(View.VISIBLE);
             btnCompletePurchase.setVisibility(View.VISIBLE);
 
-            // Calculate totals
             int totalItems = 0;
             double totalPrice = 0.0;
 
@@ -234,7 +196,6 @@ public class StoreDetailActivity extends AppCompatActivity {
                 totalPrice += item.getTotalPrice();
             }
 
-            // Update display
             tvCartItems.setText(String.format("%d item%s in cart",
                     totalItems, totalItems == 1 ? "" : "s"));
             tvCartTotal.setText(String.format("Total: €%.2f", totalPrice));
@@ -247,13 +208,9 @@ public class StoreDetailActivity extends AppCompatActivity {
             return;
         }
 
-        // Show loading state
         Toast.makeText(this, "Processing purchase...", Toast.LENGTH_SHORT).show();
-
-        // Disable button to prevent multiple clicks
         btnCompletePurchase.setEnabled(false);
 
-        // Calculate order total for thank you page
         double orderTotal = 0.0;
         int totalItems = 0;
         for (CartItem item : cartItems.values()) {
@@ -263,15 +220,9 @@ public class StoreDetailActivity extends AppCompatActivity {
         final double finalOrderTotal = orderTotal;
         final int finalTotalItems = totalItems;
 
-        Log.d(TAG, "Starting purchase process for " + cartItems.size() + " different items");
-
-        // For testing purposes, let's skip the network call and directly go to thank you
-        // Comment/uncomment the sections below to test
-
-        // OPTION 1: Skip network call for testing (uncomment this section)
+        // Skip network call and go directly to thank you page
         runOnUiThread(() -> {
             btnCompletePurchase.setEnabled(true);
-            Log.d(TAG, "Navigating to ThankYouActivity (test mode)");
 
             try {
                 Intent thankYouIntent = new Intent(StoreDetailActivity.this, ThankYouActivity.class);
@@ -279,86 +230,15 @@ public class StoreDetailActivity extends AppCompatActivity {
                 thankYouIntent.putExtra("orderDetails",
                         String.format("Order total: €%.2f (%d items)", finalOrderTotal, finalTotalItems));
 
-                Log.d(TAG, "Intent created successfully");
                 startActivity(thankYouIntent);
-                Log.d(TAG, "startActivity called successfully");
 
-                // Clear cart and finish this activity
                 clearCart();
                 finish();
-                Log.d(TAG, "Activity finished");
             } catch (Exception e) {
-                Log.e(TAG, "Error navigating to ThankYouActivity", e);
-                Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Error navigating to Thank You page: " + e.getMessage(),
+                        Toast.LENGTH_LONG).show();
             }
         });
-
-        /* OPTION 2: Use network call (comment out OPTION 1 and uncomment this section)
-        // Process purchase in background thread
-        new Thread(() -> {
-            try {
-                NetworkClient networkClient = new NetworkClient(this);
-                boolean allSuccessful = true;
-                StringBuilder results = new StringBuilder();
-
-                // Process each item in cart
-                for (CartItem item : cartItems.values()) {
-                    BuyRequest buyRequest = new BuyRequest(store.getStoreName(),
-                            item.getProductName(), item.getQuantity());
-                    BuyResponse response = networkClient.buyProducts(buyRequest);
-
-                    if (response.isSuccess()) {
-                        results.append(String.format("✓ %d x %s\n",
-                                item.getQuantity(), item.getProductName()));
-                    } else {
-                        allSuccessful = false;
-                        results.append(String.format("✗ %d x %s: %s\n",
-                                item.getQuantity(), item.getProductName(), response.getMessage()));
-                    }
-                }
-
-                final boolean finalAllSuccessful = allSuccessful;
-                final String finalResults = results.toString();
-
-                runOnUiThread(() -> {
-                    btnCompletePurchase.setEnabled(true);
-
-                    if (finalAllSuccessful) {
-                        Log.d(TAG, "All purchases successful, navigating to ThankYouActivity");
-
-                        try {
-                            // Navigate to Thank You screen
-                            Intent thankYouIntent = new Intent(StoreDetailActivity.this, ThankYouActivity.class);
-                            thankYouIntent.putExtra("storeName", store.getStoreName());
-                            thankYouIntent.putExtra("orderDetails",
-                                    String.format("Order total: €%.2f (%d items)", finalOrderTotal, finalTotalItems));
-                            startActivity(thankYouIntent);
-
-                            // Clear cart and finish this activity
-                            clearCart();
-                            finish();
-                        } catch (Exception e) {
-                            Log.e(TAG, "Error navigating to ThankYouActivity", e);
-                            Toast.makeText(this, "Purchase successful but error navigating: " + e.getMessage(),
-                                    Toast.LENGTH_LONG).show();
-                        }
-                    } else {
-                        Log.d(TAG, "Some purchases failed: " + finalResults);
-                        Toast.makeText(this, "Some items failed to purchase:\n" + finalResults,
-                                Toast.LENGTH_LONG).show();
-                    }
-                });
-
-            } catch (Exception e) {
-                Log.e(TAG, "Error processing complete purchase", e);
-                runOnUiThread(() -> {
-                    btnCompletePurchase.setEnabled(true);
-                    Toast.makeText(this, "Error processing purchase: " + e.getMessage(),
-                            Toast.LENGTH_LONG).show();
-                });
-            }
-        }).start();
-        */
     }
 
     private void clearCart() {
@@ -395,11 +275,9 @@ public class StoreDetailActivity extends AppCompatActivity {
                         return false;
                     }
                 });
-            } else {
-                Log.e(TAG, "Bottom navigation view not found");
             }
         } catch (Exception e) {
-            Log.e(TAG, "Error initializing bottom navigation", e);
+            // Error initializing bottom navigation
         }
     }
 
@@ -407,7 +285,6 @@ public class StoreDetailActivity extends AppCompatActivity {
         try {
             String logoPath = store.getStoreLogo();
             if (logoPath != null && !logoPath.isEmpty()) {
-                // Try to extract drawable name from path
                 String drawableName = extractDrawableName(logoPath);
                 if (drawableName != null) {
                     int resourceId = getResources().getIdentifier(
@@ -419,16 +296,13 @@ public class StoreDetailActivity extends AppCompatActivity {
                     }
                 }
             }
-            // Set default image if no custom logo
             setDefaultLogo(imageView);
         } catch (Exception e) {
-            Log.e(TAG, "Error loading store logo", e);
             setDefaultLogo(imageView);
         }
     }
 
     private void setDefaultLogo(ImageView imageView) {
-        // Set default image based on category
         try {
             String category = store.getFoodCategory();
             if (category != null) {
@@ -444,7 +318,6 @@ public class StoreDetailActivity extends AppCompatActivity {
                 imageView.setImageResource(android.R.drawable.ic_menu_gallery);
             }
         } catch (Exception e) {
-            Log.e(TAG, "Error setting default logo", e);
             imageView.setImageResource(android.R.drawable.ic_menu_gallery);
         }
     }
@@ -465,7 +338,7 @@ public class StoreDetailActivity extends AppCompatActivity {
                 return fileName;
             }
         } catch (Exception e) {
-            Log.e(TAG, "Error extracting drawable name", e);
+            // Error extracting drawable name
         }
         return null;
     }
@@ -474,7 +347,6 @@ public class StoreDetailActivity extends AppCompatActivity {
         try {
             List<Product> products = store.getProducts();
             if (products == null || products.isEmpty()) {
-                // No products available
                 List<String> emptyList = new ArrayList<>();
                 emptyList.add("No products available");
                 ArrayAdapter<String> adapter = new ArrayAdapter<>(
@@ -485,7 +357,6 @@ public class StoreDetailActivity extends AppCompatActivity {
                 return;
             }
 
-            // Create list of product names with prices
             List<String> productNames = new ArrayList<>();
             for (Product product : products) {
                 String productInfo = String.format("%s - €%.2f (Available: %d)",
@@ -500,13 +371,11 @@ public class StoreDetailActivity extends AppCompatActivity {
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             spinner.setAdapter(adapter);
         } catch (Exception e) {
-            Log.e(TAG, "Error setting up products spinner", e);
             Toast.makeText(this, "Error loading products", Toast.LENGTH_SHORT).show();
         }
     }
 
     private String extractProductName(String productInfo) {
-        // Extract product name from "ProductName - €Price (Available: X)" format
         if (productInfo == null || productInfo.isEmpty()) {
             return "";
         }
